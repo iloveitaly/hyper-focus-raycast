@@ -26,15 +26,18 @@ function configPath() {
   return join(homedir(), ".config/focus/");
 }
 
+function minutesFromNowToTimestamp(minutes: number): number {
+  return Math.round(new Date().getTime() / 1000) + minutes * 60;
+}
+
 function SetOverride(props: { [name: string]: string }) {
   async function submitOverride(overrideName: string, minutes: number) {
-    const until = Math.round(new Date().getTime() / 1000) + minutes * 60;
     const result = await fetch(`${baseURL()}/override`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: overrideName,
-        until: until,
+        until: minutesFromNowToTimestamp(minutes),
       }),
     });
 
@@ -84,12 +87,10 @@ function ChooseOverride() {
 
 function Pause() {
   async function submitPause(minutes: number) {
-    const until = Math.round(new Date().getTime() / 1000) + minutes * 60;
-
     const result = await fetch(`${baseURL()}/pause`, {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        until: until,
+        until: minutesFromNowToTimestamp(minutes),
       }),
       method: "POST",
     });
@@ -104,7 +105,7 @@ function Pause() {
     popToRoot({ clearSearchBar: true });
   }
 
-  const pauseOptions = [5, 10, 15, 30].map((minutes) => {
+  const pauseOptions = [1, 5, 10, 15, 30].map((minutes) => {
     return (
       <List.Item
         key={minutes}
@@ -136,6 +137,8 @@ export default function Command() {
 
     let summaryItem: React.ReactNode;
 
+    // TODO unclear to me if List.Item is the best way to display general application status. Would be nice if there was
+    //      a specific UI component for this. It makes the UX a bit strange.
     if (isPaused) {
       summaryItem = (
         <List.Item
@@ -156,8 +159,8 @@ export default function Command() {
       summaryItem = (
         <List.Item
           icon={Icon.Calendar}
-          title={`Using schedule '${data?.schedule?.name}'`}
-          subtitle={`overriding until ${timestampToHoursMinutes(data.schedule.until)}`}
+          title={`Planned focus using '${data?.schedule?.name}'`}
+          subtitle={`scheduled until ${timestampToHoursMinutes(data.schedule.until)}`}
         />
       );
     } else {
