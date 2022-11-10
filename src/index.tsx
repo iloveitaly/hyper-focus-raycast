@@ -184,30 +184,35 @@ export default function Command() {
             }
           />
         )}
-        <List.Item
-          icon={Icon.Pencil}
-          title="Override"
-          subtitle="schedule a temporary override"
-          actions={
-            <ActionPanel>
-              <Action.Push title="Schedule Override" target={<ChooseOverride />} />
-            </ActionPanel>
-          }
-        />
-        <List.Item
-          icon={Icon.SaveDocument}
-          title="Configure"
-          subtitle="configure focus schedules"
-          actions={
-            <ActionPanel>
-              <Action.ShowInFinder title="Open Configuration" path={configPath()} />
-              <Action.Push title="Schedule Override" target={<ChooseOverride />} />
-            </ActionPanel>
-          }
-        />
       </>
     );
   };
 
-  return <List isLoading={isLoading}>{!isLoading ? renderActions() : null}</List>;
+  //
+  return (
+    <List isLoading={isLoading}>
+      {!isLoading && renderActions()}
+      <List.Item
+        icon={Icon.Pencil}
+        title="Override"
+        subtitle="schedule a temporary override"
+        actions={
+          <ActionPanel>
+            <Action.Push title="Schedule Override" target={<ChooseOverride />} />
+          </ActionPanel>
+        }
+      />
+      <List.Item
+        icon={Icon.SaveDocument}
+        title="Configure"
+        subtitle="configure focus schedules"
+        actions={
+          <ActionPanel>
+            <Action.ShowInFinder title="Open Configuration" path={configPath()} />
+            <Action.Push title="Schedule Override" target={<ChooseOverride />} />
+          </ActionPanel>
+        }
+      />
+    </List>
+  );
 }
