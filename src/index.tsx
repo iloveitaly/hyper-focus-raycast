@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { homedir } from "os";
 import { join } from "path";
 
-import { ActionPanel, List, Action, popToRoot, showHUD, Icon } from "@raycast/api";
+import { Detail, ActionPanel, List, Action, popToRoot, showHUD, Icon } from "@raycast/api";
 import { useFetch } from "@raycast/utils";
 
 export interface FocusStatus {
@@ -128,7 +128,7 @@ function timestampToHoursMinutes(timestamp: number): string {
 }
 
 export default function Command() {
-  const { data, isLoading } = useFetch<FocusStatus>(baseURL() + "/status");
+  const { data, isLoading, error } = useFetch<FocusStatus>(baseURL() + "/status");
 
   const renderActions = () => {
     const hasScheduledFocus = data?.schedule?.until !== null;
@@ -188,7 +188,18 @@ export default function Command() {
     );
   };
 
-  //
+  if (!isLoading && error) {
+    return (
+      <Detail
+        markdown="
+# Hyper Focus Not Installed
+
+[Install the application.](https://github.com/iloveitaly/hyper-focus)
+"
+      />
+    );
+  }
+
   return (
     <List isLoading={isLoading}>
       {!isLoading && renderActions()}
