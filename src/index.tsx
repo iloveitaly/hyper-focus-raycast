@@ -105,11 +105,27 @@ function Pause() {
     popToRoot({ clearSearchBar: true });
   }
 
-  const pauseOptions = [1, 5, 10, 15, 30].map((minutes) => {
+  const pauseOptions = [1, 5, 10, 15, 30, 60, 120].map((minutes) => {
+    function formatMinutes(minutes) {
+      if (minutes >= 60) {
+        const hours = Math.floor(minutes / 60);
+        if (hours == 1) {
+          return "1 hour";
+        } else {
+          return `${hours} hours`;
+        }
+      } else {
+        if (minutes == 1) {
+          return "1 minute";
+        } else {
+          return minutes + " minutes";
+        }
+      }
+    }
     return (
       <List.Item
         key={minutes}
-        title={`${minutes} minutes`}
+        title={formatMinutes(minutes)}
         actions={
           <ActionPanel>
             <Action onAction={() => submitPause(minutes)} title="Pause" />
