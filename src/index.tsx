@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import { homedir } from "os";
 import { join } from "path";
+import assert from "node:assert";
 
 import { Detail, ActionPanel, List, Action, popToRoot, showHUD, Icon } from "@raycast/api";
 import { useFetch } from "@raycast/utils";
@@ -106,7 +107,7 @@ function Pause() {
   }
 
   const pauseOptions = [1, 5, 10, 15, 30, 60, 120].map((minutes) => {
-    function formatMinutes(minutes) {
+    function formatMinutes(minutes: number) {
       if (minutes >= 60) {
         const hours = Math.floor(minutes / 60);
         if (hours == 1) {
@@ -122,6 +123,7 @@ function Pause() {
         }
       }
     }
+
     return (
       <List.Item
         key={minutes}
@@ -156,6 +158,8 @@ export default function Command() {
     // TODO unclear to me if List.Item is the best way to display general application status. Would be nice if there was
     //      a specific UI component for this. It makes the UX a bit strange.
     if (isPaused) {
+      assert(data?.pause?.until !== undefined);
+
       summaryItem = (
         <List.Item
           icon={Icon.PauseFilled}
@@ -164,6 +168,8 @@ export default function Command() {
         />
       );
     } else if (hasOverrideEnabled) {
+      assert(data?.override?.until !== undefined);
+
       summaryItem = (
         <List.Item
           icon={Icon.Wand}
@@ -172,6 +178,8 @@ export default function Command() {
         />
       );
     } else if (hasScheduledFocus) {
+      assert(data?.schedule?.until !== undefined);
+
       summaryItem = (
         <List.Item
           icon={Icon.Calendar}
